@@ -7,9 +7,10 @@ edition = "2021"
 [build]
 target = "thumbv7em-none-eabihf"
 [dependencies]
+bootloader = "0.9"
 
-[profile.dev]
-panic = "abort"
-
-[profile.release]
-panic = "abort"
+#[profile.dev]
+#panic = "abort"
+#
+#[profile.release]
+#panic = "abort"
