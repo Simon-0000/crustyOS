@@ -1,6 +1,6 @@
 {
     "name": "Rust Development Environment for crustyOS",
-    "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+    "image": "mcr.microsoft.com/devcontainers/rust:latest",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -9,10 +9,9 @@
         }
     },
 
-    "postCreateCommand": "sudo apt-get update && sudo curl https://sh.rustup.rs -sSf | sh && \
-                         /bin/bash -c 'source $HOME/.cargo/env && \
+    "postCreateCommand": "sudo apt-get update && \
                          cargo install bootimage && \
                          rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu && \
-                         rustup component add llvm-tools-preview' && \
+                         rustup component add llvm-tools-preview && \
                          sudo apt install qemu-system-x86"
 }
