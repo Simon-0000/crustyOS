@@ -9,9 +9,5 @@
         }
     },
 
-    "postCreateCommand": "sudo apt-get update && \
-                         cargo install bootimage && \
-                         rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu && \
-                         rustup component add llvm-tools-preview && \
-                         sudo apt install qemu-system-x86"
+    "postCreateCommand": "./RustDependenciesInstall.sh"
 }
