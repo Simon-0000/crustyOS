@@ -21,7 +21,11 @@ pub extern "C" fn _start()-> ! {
             
     //     }
     // }
-    write!(*vga_buffer::WRITER.lock(), "The numbers are \n{} and {}", 42, 1.0/3.0).unwrap();
+    // write!(*vga_buffer::WRITER.lock(), "The numbers are \n{} and {}", 42, 1.0/3.0).unwrap();
+    println!("okkok{}",3+5);
+    print!("Hello");
+    print!(" world");
+    println!();
     loop{}
 }
 

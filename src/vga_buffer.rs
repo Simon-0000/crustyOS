@@ -4,6 +4,8 @@ use lazy_static::lazy_static;
 use spin::Mutex;
 
 
+const BUFFER_HEIGHT: usize = 25;
+const BUFFER_WIDTH: usize = 80;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,10 +32,9 @@ pub enum Color{
 #[derive(Debug,Clone,Copy,PartialEq,Eq)]
 #[repr(transparent)]
 struct ColorCode(u8);
-
 impl ColorCode{
-    fn new(forground:Color, backGround:Color) ->ColorCode {
-        ColorCode((backGround as u8) <<4 | (forground as u8))
+    fn new(forground:Color, background:Color) ->ColorCode {
+        ColorCode((background as u8) <<4 | (forground as u8))
     }
 }
 
@@ -44,8 +45,6 @@ struct ScreenChar{
     color_code: ColorCode
 }
 
-const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
 #[repr(transparent)]//to make sure that it respects the same ScreenChar size behaviour 
 struct Buffer{
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT]
@@ -55,6 +54,24 @@ pub struct Writer{
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer
+}
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::Yellow, Color::Black),
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    });
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => (write!($crate::vga_buffer::WRITER.lock(),"{}",format_args!($($arg)*)).unwrap());
+}
+
+#[macro_export]
+macro_rules! println {
+    () => (write!($crate::vga_buffer::WRITER.lock(),"\n").unwrap());
+    ($($arg:tt)*) => (write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap());
 }
 
 
@@ -107,11 +124,4 @@ impl fmt::Write for Writer
         self.write_string(s);
         Ok(())
     }
-}
-lazy_static! {
-    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
-        column_position: 0,
-        color_code: ColorCode::new(Color::Yellow, Color::Black),
-        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    });
 }
