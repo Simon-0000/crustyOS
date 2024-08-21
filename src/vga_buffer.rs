@@ -31,10 +31,19 @@ pub enum Color{
 
 #[derive(Debug,Clone,Copy,PartialEq,Eq)]
 #[repr(transparent)]
-struct ColorCode(u8);
+pub struct ColorCode(u8);
 impl ColorCode{
-    fn new(forground:Color, background:Color) ->ColorCode {
+    pub fn new(forground:Color, background:Color) ->ColorCode {
         ColorCode((background as u8) <<4 | (forground as u8))
+    }
+    pub fn from_u8(forground:u8, background:u8) ->ColorCode {
+        ColorCode(background <<4 | forground )
+    }
+    pub fn get_background_value(&self) ->u8{
+        self.0 >> 4
+    }
+    pub fn get_foreground_value(&self) ->u8{
+        self.0 & 0b1111
     }
 }
 
@@ -52,7 +61,7 @@ struct Buffer{
 
 pub struct Writer{
     column_position: usize,
-    color_code: ColorCode,
+    pub color_code: ColorCode,
     buffer: &'static mut Buffer
 }
 lazy_static! {
