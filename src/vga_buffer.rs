@@ -84,7 +84,17 @@ impl Writer{
 
 
     fn new_line(&mut self) {
-        //TODO
+        for i in 1..BUFFER_HEIGHT {
+            for j in 0..BUFFER_WIDTH {
+                self.buffer.chars[i-1][j].write(self.buffer.chars[i][j].read());
+            }
+        }
+        self.clear_line(BUFFER_HEIGHT - 1);
+        self.column_position = 0;
+    }
+    fn clear_line(&mut self, line : usize) {
+        self.buffer.chars[line].iter_mut().for_each(|v| 
+            v.write(ScreenChar{ascii:b' ',color_code: self.color_code}));
     }
 }
 
@@ -105,5 +115,5 @@ pub fn print_stuff() {
     };
     writer.write_byte(b'H');
     writer.write_string("ello ");
-    write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
+    write!(writer, "The numbers\n are {} and {}", 42, 1.0/3.0).unwrap();
 }
