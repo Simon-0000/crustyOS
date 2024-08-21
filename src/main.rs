@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 use core::panic::PanicInfo;
+use core::fmt::Write;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -20,7 +21,7 @@ pub extern "C" fn _start()-> ! {
             
     //     }
     // }
-    vga_buffer::print_stuff();
+    write!(*vga_buffer::WRITER.lock(), "The numbers are \n{} and {}", 42, 1.0/3.0).unwrap();
     loop{}
 }
 

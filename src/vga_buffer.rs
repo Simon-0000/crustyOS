@@ -1,5 +1,8 @@
 use volatile::Volatile;
-use core::fmt::{self,Write}; // Import fmt and Write trait
+use core::fmt;
+use lazy_static::lazy_static;
+use spin::Mutex;
+
 
 
 #[allow(dead_code)]
@@ -105,15 +108,10 @@ impl fmt::Write for Writer
         Ok(())
     }
 }
-
-
-pub fn print_stuff() {
-    let mut writer = Writer{
-        column_position:0,
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+        column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
-        buffer:unsafe {&mut *(0xb8000 as *mut Buffer)}
-    };
-    writer.write_byte(b'H');
-    writer.write_string("ello ");
-    write!(writer, "The numbers\n are {} and {}", 42, 1.0/3.0).unwrap();
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    });
 }
