@@ -82,6 +82,17 @@ macro_rules! println {
     () => (write!($crate::vga_buffer::WRITER.lock(),"\n").unwrap());
     ($($arg:tt)*) => (write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap());
 }
+#[macro_export]
+macro_rules! cprintln {
+    ($color:expr, $($arg:tt)*) => (
+    let original_color =  $crate::vga_buffer::WRITER.lock().color_code;
+    let temp = ColorCode::from_u8($color as u8,  original_color.get_background_value());
+    $crate::vga_buffer::WRITER.lock().color_code = temp;
+    write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap();
+    $crate::vga_buffer::WRITER.lock().color_code = original_color;
+    );
+}
+
 
 
 impl Writer{
@@ -110,7 +121,12 @@ impl Writer{
             }
         )   
     }
-
+    pub fn write_colored_string(&mut self, message: &str, text_color: Color){
+        let original_color =  self.color_code;
+        self.color_code = ColorCode::from_u8(text_color as u8,  self.color_code.get_background_value());
+        self.write_string(message);
+        self.color_code = original_color;
+    }
 
     fn new_line(&mut self) {
         for i in 1..BUFFER_HEIGHT {
