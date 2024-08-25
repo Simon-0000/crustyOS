@@ -8,8 +8,11 @@ use core::panic::PanicInfo;
 use core::fmt::Write;
 use vga_buffer::{Color, ColorCode, WRITER};
 use x86_64::instructions::port::Port;
+use test_tools::Testable;
 mod vga_buffer;
 mod serial;
+mod test_tools;
+
 const DEVICE_ADDRESS: u16= 0xf4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -20,25 +23,22 @@ enum ExitCode{
 }
 
 #[cfg(test)]
-pub fn test_runner(tests: &[&dyn Fn()]) {
+pub fn test_runner(tests: &[&dyn Testable]) {
+
     serial_println!("Running {} tests", tests.len());
     for test in tests {
-        test();
+        test.run();
     }
     Exit(ExitCode::Success);
 }
 #[test_case]
 fn test_trivial_1(){
-    serial_print!("Trivial test ok...");
     assert_eq!(1,1);
-    serial_println!("[OK]");
 }
 
 #[test_case]
 fn test_trivial_2(){
-    serial_print!("Trivial test error...");
     assert_eq!(1,0);
-    serial_println!("[OK]");
 }
 
 #[cfg(not(test))]
@@ -78,8 +78,5 @@ pub extern "C" fn _start()-> ! {
     }
 
     loop{}
-
-
-
 }
 
