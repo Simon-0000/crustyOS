@@ -9,7 +9,7 @@ use core::fmt::Write;
 use vga_buffer::{Color, ColorCode, WRITER};
 use x86_64::instructions::port::Port;
 mod vga_buffer;
-
+mod serial;
 const DEVICE_ADDRESS: u16= 0xf4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
