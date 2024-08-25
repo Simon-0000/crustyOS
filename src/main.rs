@@ -18,27 +18,43 @@ enum ExitCode{
     Success = 0x10,
     Failed = 0x11
 }
+
 #[cfg(test)]
 pub fn test_runner(tests: &[&dyn Fn()]) {
-    println!("Running {} tests", tests.len());
+    serial_println!("Running {} tests", tests.len());
     for test in tests {
         test();
     }
     Exit(ExitCode::Success);
 }
-
 #[test_case]
-fn testing(){
-    cprintln!(Color::Green,"testing function called(green text)");
-    println!("default text color");
+fn test_trivial_1(){
+    serial_print!("Trivial test ok...");
+    assert_eq!(1,1);
+    serial_println!("[OK]");
 }
 
+#[test_case]
+fn test_trivial_2(){
+    serial_print!("Trivial test error...");
+    assert_eq!(1,0);
+    serial_println!("[OK]");
+}
+
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     cprintln!(Color::Red,"\n{}",info);
+    loop {}
+}
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    serial_println!("[failed]\nERROR: {}",info);
     Exit(ExitCode::Failed);
     loop {}
 }
+
 fn Exit(code : ExitCode)
 {
     unsafe{
