@@ -42,7 +42,6 @@ pub extern "C" fn _start()-> ! {
     print!("Hello");
     print!(" world");
     panic!("Some panic message");
-    
     loop{}
 }
 
