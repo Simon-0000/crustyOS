@@ -4,11 +4,11 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-pub mod serial;
-pub mod vga_buffer;
-
 use core::panic::PanicInfo;
-use x86_64::instructions::port::Port;
+
+pub mod serial;
+pub mod vga_buffer; 
+
 
 const DEVICE_ADDRESS: u16 = 0xf4;
 
@@ -38,9 +38,11 @@ pub fn test_runner(tests: &[&dyn Testable]) {
     for test in tests {
         test.run();
     }
-    Exit(ExitCode::Success);
+    exit_qemu(ExitCode::Success);
 }
-pub fn Exit(code: ExitCode) {
+pub fn exit_qemu(code: ExitCode) {
+    use x86_64::instructions::port::Port;
+
     unsafe {
         let mut port = Port::new(DEVICE_ADDRESS);
         port.write(code as u32);
@@ -49,7 +51,7 @@ pub fn Exit(code: ExitCode) {
 
 pub fn test_panic(info: &PanicInfo) -> ! {
     serial_println!("[failed]\nERROR: {}", info);
-    Exit(ExitCode::Failed);
+    exit_qemu(ExitCode::Failed);
     loop {}
 }
 

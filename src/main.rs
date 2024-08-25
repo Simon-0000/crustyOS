@@ -1,12 +1,11 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(crate::test_runner)]
+#![test_runner(crustyOS::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use core::fmt::Write;
 use core::panic::PanicInfo;
-use crustyOS::{*,vga_buffer::Color,vga_buffer::ColorCode};
+use crustyOS::{*,self,println,cprintln,print};
 
 
 
@@ -45,7 +44,7 @@ pub extern "C" fn _start() -> ! {
     #[cfg(not(test))]
     {
         println!("running...");
-        Exit(ExitCode::Success);
+        exit_qemu(ExitCode::Success);
     }
     loop {}
 }

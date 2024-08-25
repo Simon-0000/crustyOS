@@ -73,23 +73,23 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => (write!($crate::vga_buffer::WRITER.lock(),"{}",format_args!($($arg)*)).unwrap());
+    ($($arg:tt)*) => ();//(write!($crate::vga_buffer::WRITER.lock(),"{}",format_args!($($arg)*)).unwrap());
 }
 
 #[macro_export]
 macro_rules! println {
-    () => (write!($crate::vga_buffer::WRITER.lock(),"\n").unwrap());
-    ($($arg:tt)*) => (write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap());
+    () => ();//(write!($crate::vga_buffer::WRITER.lock(),"\n").unwrap());
+    ($($arg:tt)*) => ();//(write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap());
 }
 #[macro_export]
 macro_rules! cprintln {
-    ($color:expr, $($arg:tt)*) => (
-    let original_color =  $crate::vga_buffer::WRITER.lock().color_code;
-    let temp = ColorCode::from_u8($color as u8,  original_color.get_background_value());
-    $crate::vga_buffer::WRITER.lock().color_code = temp;
-    write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap();
-    $crate::vga_buffer::WRITER.lock().color_code = original_color;
-    );
+    ($color:expr, $($arg:tt)*) => ();
+    // let original_color =  $crate::vga_buffer::WRITER.lock().color_code;
+    // let temp = ColorCode::from_u8($color as u8,  original_color.get_background_value());
+    // $crate::vga_buffer::WRITER.lock().color_code = temp;
+    // write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap();
+    // $crate::vga_buffer::WRITER.lock().color_code = original_color;
+    // );
 }
 
 impl Writer {
