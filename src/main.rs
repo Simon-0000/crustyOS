@@ -46,6 +46,9 @@ pub extern "C" fn _start() -> ! {
         println!("running...");
         println!("test");
         cprintln!(Color::Green,"test2");
+        cprintln!(Color::Blue,"test3");
+        cprintln!(Color::Pink,"test4");
+        println!("final test");
         panic!("panic here");
         exit_qemu(ExitCode::Success);
     }

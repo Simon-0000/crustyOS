@@ -82,7 +82,7 @@ macro_rules! println {
     ($($arg:tt)*) => (print!("{}\n",format_args!($($arg)*)));
 }
 #[macro_export]
-macro_rules! cprintln {
+macro_rules! cprint {
     ($color:expr, $($arg:tt)*) => (
         {
             use $crate::vga_buffer::Color;
@@ -90,6 +90,13 @@ macro_rules! cprintln {
         }
     );
 }
+#[macro_export]
+macro_rules! cprintln {
+    ($color:expr, $($arg:tt)*) => (
+        cprint!($color,"{}\n",format_args!($($arg)*))
+    );
+}
+
 pub fn _print(args: ::core::fmt::Arguments){
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).expect("Printing to the crusty console failed");
