@@ -5,7 +5,7 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use crustyOS::{*,self,println,cprintln,print};
+use crustyOS::*;
 
 
 
@@ -44,6 +44,9 @@ pub extern "C" fn _start() -> ! {
     #[cfg(not(test))]
     {
         println!("running...");
+        println!("test");
+        cprintln!(Color::Green,"test2");
+        panic!("panic here");
         exit_qemu(ExitCode::Success);
     }
     loop {}

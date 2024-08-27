@@ -73,24 +73,34 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ();//(write!($crate::vga_buffer::WRITER.lock(),"{}",format_args!($($arg)*)).unwrap());
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! println {
-    () => ();//(write!($crate::vga_buffer::WRITER.lock(),"\n").unwrap());
-    ($($arg:tt)*) => ();//(write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap());
+    () => (print!("\n"));
+    ($($arg:tt)*) => (print!("{}\n",format_args!($($arg)*)));
 }
 #[macro_export]
 macro_rules! cprintln {
-    ($color:expr, $($arg:tt)*) => ();
-    // let original_color =  $crate::vga_buffer::WRITER.lock().color_code;
-    // let temp = ColorCode::from_u8($color as u8,  original_color.get_background_value());
-    // $crate::vga_buffer::WRITER.lock().color_code = temp;
-    // write!($crate::vga_buffer::WRITER.lock(),"{}\n",format_args!($($arg)*)).unwrap();
-    // $crate::vga_buffer::WRITER.lock().color_code = original_color;
-    // );
+    ($color:expr, $($arg:tt)*) => (
+        {
+            use $crate::vga_buffer::Color;
+            $crate::vga_buffer::_cprint($color,format_args!($($arg)*))
+        }
+    );
 }
+pub fn _print(args: ::core::fmt::Arguments){
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).expect("Printing to the crusty console failed");
+}
+pub fn _cprint(color: Color, args: ::core::fmt::Arguments){
+    let original_color =  WRITER.lock().color_code;
+    WRITER.lock().color_code = ColorCode::from_u8(color as u8,  original_color.get_background_value());
+    _print(args);
+    WRITER.lock().color_code = original_color;
+}
+
 
 impl Writer {
     pub fn write_byte(&mut self, byte: u8) {

@@ -5,7 +5,6 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-
 pub mod serial;
 pub mod vga_buffer; 
 
@@ -50,7 +49,7 @@ pub fn exit_qemu(code: ExitCode) {
 }
 
 pub fn test_panic(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\nERROR: {}", info);
+    serial_println!("[FAILED]\nERROR: {}", info);
     exit_qemu(ExitCode::Failed);
     loop {}
 }
